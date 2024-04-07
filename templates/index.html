@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Recommendation</title>
+</head>
+<body>
+    <h1>Book Recommendation System</h1>
+    <button id="topRatings">Get Top Ratings</button>
+    <div id="topRatingsResult"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("topRatings").addEventListener("click", function() {
+                var userID = prompt("Please enter user ID:", "1");
+                var count = prompt("How many top ratings?", "5");
+                if (userID != null && count != null) {
+                    fetch(`/${userID}/ratings/top/${count}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById("topRatingsResult").innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
+            });
+        });
+    </script>
+</body>
+</html>
