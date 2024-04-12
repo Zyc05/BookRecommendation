@@ -10,3 +10,5 @@
 启用python环境：conda activate rec1
 
 使用start-server.sh启动程序
+
+/usr/local/spark/sbin/start-all.sh
