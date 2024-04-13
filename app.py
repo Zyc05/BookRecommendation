@@ -24,17 +24,14 @@ def book_ratings(user_id, book_id):
     return json.dumps(ratings)
  
  
-@main.route("/<int:user_id>/ratings", methods = ["POST"])
+@main.route("/<int:user_id>/ratings", methods=["POST"])
 def add_ratings(user_id):
-    # get the ratings from the Flask POST request object
-    ratings_list = request.form.keys()[0].strip().split("\n")
-    ratings_list = map(lambda x: x.split(","), ratings_list)
-    # create a list with the format required by the negine (user_id, book_id, rating)
-    ratings = map(lambda x: (user_id, int(x[0]), float(x[1])), ratings_list)
-    # add them to the model using then engine API
+    ratings_data = request.get_json()  # 获取JSON数据
+    ratings_list = ratings_data['ratings']
+    ratings = [(user_id, int(rating['book_id']), float(rating['rating'])) for rating in ratings_list]
     recommendation_engine.add_ratings(ratings)
- 
-    return json.dumps(ratings)
+
+    return json.dumps(ratings_list)  # 返回接收到的数据以供确认
 @main.route("/")
 def index():
     # 渲染templates/index.html模板

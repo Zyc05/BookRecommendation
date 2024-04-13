@@ -5,11 +5,19 @@
 </head>
 <body>
     <h1>Book Recommendation System</h1>
+    
     <button id="topRatings">Get Top Ratings</button>
     <div id="topRatingsResult"></div>
+    
+    <button id="submitRatings">Submit Ratings</button>
+    <div id="ratingsResult"></div>
+
+    <button id="checkRating">Check Book Rating</button>
+    <div id="checkRatingResult"></div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Event listener for getting top ratings
             document.getElementById("topRatings").addEventListener("click", function() {
                 var userID = prompt("Please enter user ID:", "1");
                 var count = prompt("How many top ratings?", "5");
@@ -18,6 +26,49 @@
                         .then(response => response.json())
                         .then(data => {
                             document.getElementById("topRatingsResult").innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
+            });
+
+            // Event listener for submitting ratings
+            document.getElementById("submitRatings").addEventListener("click", function() {
+                var userID = prompt("Please enter user ID:", "1");
+                var ratings = prompt("Enter ratings as 'book_id,rating' on new lines:");
+                if (userID != null && ratings != null) {
+                    var formattedRatings = ratings.split("\n").map(function(item) {
+                        var parts = item.split(",");
+                        return {
+                            book_id: parts[0].trim(),
+                            rating: parseFloat(parts[1].trim())
+                        };
+                    });
+
+                    fetch(`/${userID}/ratings`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ratings: formattedRatings})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("ratingsResult").innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+                    })
+                    .catch(error => console.error('Error:', error));
+
+                }
+            });
+
+            // Event listener for checking a user's rating for a specific book
+            document.getElementById("checkRating").addEventListener("click", function() {
+                var userID = prompt("Please enter user ID:", "1");
+                var bookID = prompt("Please enter book ID:");
+                if (userID != null && bookID != null) {
+                    fetch(`/${userID}/ratings/${bookID}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById("checkRatingResult").innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
                         })
                         .catch(error => console.error('Error:', error));
                 }
